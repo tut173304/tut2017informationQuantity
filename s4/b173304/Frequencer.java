@@ -14,30 +14,52 @@ interface FrequencerInterface {     // This interface provides the design for fr
     // For the incorrect value of START or END, the behavior is undefined.
 */
 
+/*
+interface FrequencerInterface {     //このインタフェースは、周波数カウンタの設計を提供します。
+    void setTarget(byte[]  target); //検索するデータを設定します。
+    void setSpace(byte[]  space);  //検索対象となるデータを設定します。
+    int frequency(); // TARGETが設定されていないか、TARGETの長さがゼロの場合は-1を返します
+                    //それ以外の場合は、SPACEが設定されていないか、スペースの長さがゼロの場合は0を返します
+                    //それ以外の場合は、SPACEのTARGETの頻度を取得します。
+    int subByteFrequency(int start, int end);
+    // target [start]、target [start + 1]、...、target [end-1]のように、targetのsubByteの頻度を取得します。
+    // STARTまたはENDの値が正しくない場合の動作は未定義です。
+}
+*/
+
 
 public class Frequencer implements FrequencerInterface{
     // Code to Test, *warning: This code  contains intentional problem*
     byte [] myTarget;
-    byte [] mySpace;
-    public void setTarget(byte [] target) { myTarget = target;}
-    public void setSpace(byte []space) { mySpace = space; }
+	byte [] mySpace;
+	boolean flag1 = false;
+	boolean flag2 = false;
+	
+    public void setTarget(byte [] target) { myTarget = target; flag1 = true; }
+    public void setSpace(byte []space) { mySpace = space; flag2 = true; }
     public int frequency() {
-	int targetLength = myTarget.length;
-	int spaceLength = mySpace.length;
-	int count = 0;
-	for(int start = 0; start<spaceLength; start++) { // Is it OK?
-	    boolean abort = false;
-	    for(int i = 0; i<targetLength; i++) {
-		if(myTarget[i] != mySpace[start+i]) { abort = true; break; }
-	    }
-	    if(abort == false) { count++; }
-	}
-	return count;
+		if(flag1 == false || myTarget.length == 0) { return -1; }
+		else if(flag2 == false || mySpace.length == 0) { return 0; }
+
+		int targetLength = myTarget.length;
+		int spaceLength = mySpace.length;
+		int count = 0;
+		//System.out.println(targetLength+" "+spaceLength);
+		for(int start = 0; start < spaceLength ; start++) { // Is it OK?
+			boolean abort = false;
+			for(int i = 0; i<targetLength; i++) {
+				//System.out.println(i+start+" "+spaceLength);
+				if( (i+start) == spaceLength || myTarget[i] != mySpace[start+i]) { abort = true; break; }
+			}
+			if(abort == false) { count++; }
+		}
+		return count;
     }
 
     // I know that here is a potential problem in the declaration.
     public int subByteFrequency(int start, int length) { 
 	// Not yet, but it is not currently used by anyone.
+
 	return -1;
     }
 

@@ -14,73 +14,94 @@ public interface InformationEstimatorInterface{
 // Otherwise, estimation of information quantity, 
 }                        
 */
+/*
+package s4.specification;
+public interface InformationEstimatorInterface{
+    void setTarget(byte target[]); //情報量を計算するためのデータを設定する
+    void setSpace(byte space[]); //サンプル空間のデータをコンピュータ確率に設定する
+    double estimation(); //ターゲットが設定されていないか、ターゲットの長さがゼロの場合は0.0を返します。
+// true値が無限大の場合、または空白が設定されていない場合は、Double.MAX_VALUEを返します。
+// true値がfineteでDouble.MAX_VALUEより大きい場合の動作は未定義です。
+//これは、スペースが不当に大きい場合にのみ発生することに注意してください。 とにかく他の問題に遭遇します。
+//そうでなければ、情報量の推定、
+}                        
+*/
+
 
 public class InformationEstimator implements InformationEstimatorInterface{
     // Code to tet, *warning: This code condtains intentional problem*
     byte [] myTarget; // data to compute its information quantity
     byte [] mySpace;  // Sample space to compute the probability
-    FrequencerInterface myFrequencer;  // Object for counting frequency
+	FrequencerInterface myFrequencer;  // Object for counting frequency
+
+	boolean check1 = false;
+	boolean check2 = false;
 
     byte [] subBytes(byte [] x, int start, int end) {
-	// corresponding to substring of String for  byte[] ,
-	// It is not implement in class library because internal structure of byte[] requires copy.
-	byte [] result = new byte[end - start];
-	for(int i = 0; i<end - start; i++) { result[i] = x[start + i]; };
-	return result;
+		// corresponding to substring of String for  byte[] ,
+		// It is not implement in class library because internal structure of byte[] requires copy.
+		byte [] result = new byte[end - start];
+		for(int i = 0; i<end - start; i++) { result[i] = x[start + i]; };
+		return result;
     }
 
     // IQ: information quantity for a count,  -log2(count/sizeof(space))
     double iq(int freq) {
-	return  - Math.log10((double) freq / (double) mySpace.length)/ Math.log10((double) 2.0);
+		return  - Math.log10((double) freq / (double) mySpace.length)/ Math.log10((double) 2.0);
     }
 
-    public void setTarget(byte [] target) { myTarget = target;}
+    public void setTarget(byte [] target) { myTarget = target; check1 = true; }
     public void setSpace(byte []space) { 
-	myFrequencer = new Frequencer();
-	mySpace = space; myFrequencer.setSpace(space); 
+		myFrequencer = new Frequencer();
+		mySpace = space; myFrequencer.setSpace(space);
+		check2 = true;
     }
 
     public double estimation(){
-	boolean [] partition = new boolean[myTarget.length+1];
-	int np;
-	np = 1<<(myTarget.length-1);
-	// System.out.println("np="+np+" length="+myTarget.length);
-	double value = Double.MAX_VALUE; // value = mininimum of each "value1".
-
-	for(int p=0; p<np; p++) { // There are 2^(n-1) kinds of partitions.
-	    // binary representation of p forms partition.
-	    // for partition {"ab" "cde" "fg"}
-	    // a b c d e f g   : myTarget
-	    // T F T F F T F T : partition:
-	    partition[0] = true; // I know that this is not needed, but..
-	    for(int i=0; i<myTarget.length -1;i++) {
-		partition[i+1] = (0 !=((1<<i) & p));
-	    }
-	    partition[myTarget.length] = true;
-
-	    // Compute Information Quantity for the partition, in "value1"
-	    // value1 = IQ(#"ab")+IQ(#"cde")+IQ(#"fg") for the above example
-            double value1 = (double) 0.0;
-	    int end = 0;;
-	    int start = end;
-	    while(start<myTarget.length) {
-		// System.out.write(myTarget[end]);
-		end++;;
-		while(partition[end] == false) { 
-		    // System.out.write(myTarget[end]);
-		    end++;
+		if( check1 == false || myTarget.length == 0) {
+			return 0.0;
 		}
-		// System.out.print("("+start+","+end+")");
-		myFrequencer.setTarget(subBytes(myTarget, start, end));
-		value1 = value1 + iq(myFrequencer.frequency());
-		start = end;
-	    }
-	    // System.out.println(" "+ value1);
 
-	    // Get the minimal value in "value"
-	    if(value1 < value) value = value1;
-	}
-	return value;
+		boolean [] partition = new boolean[myTarget.length+1];
+		int np;
+		np = 1<<(myTarget.length-1);
+		// System.out.println("np="+np+" length="+myTarget.length);
+		double value = Double.MAX_VALUE; // value = mininimum of each "value1".
+
+		for(int p=0; p<np; p++) { // There are 2^(n-1) kinds of partitions.
+			// binary representation of p forms partition.
+			// for partition {"ab" "cde" "fg"}
+			// a b c d e f g   : myTarget
+			// T F T F F T F T : partition:
+			partition[0] = true; // I know that this is not needed, but..
+			for(int i=0; i<myTarget.length -1;i++) {
+			partition[i+1] = (0 !=((1<<i) & p));
+			}
+			partition[myTarget.length] = true;
+
+			// Compute Information Quantity for the partition, in "value1"
+			// value1 = IQ(#"ab")+IQ(#"cde")+IQ(#"fg") for the above example
+				double value1 = (double) 0.0;
+			int end = 0;;
+			int start = end;
+			while(start<myTarget.length) {
+			// System.out.write(myTarget[end]);
+			end++;;
+			while(partition[end] == false) { 
+				// System.out.write(myTarget[end]);
+				end++;
+			}
+			// System.out.print("("+start+","+end+")");
+			myFrequencer.setTarget(subBytes(myTarget, start, end));
+			value1 = value1 + iq(myFrequencer.frequency());
+			start = end;
+			}
+			// System.out.println(" "+ value1);
+
+			// Get the minimal value in "value"
+			if(value1 < value) value = value1;
+		}
+		return value;
     }
 
     public static void main(String[] args) {
