@@ -123,7 +123,7 @@ public class InformationEstimator implements InformationEstimatorInterface{
 	System.out.println(">00 "+value);
     }
 }
-				  
+			  
 			       
 
 	

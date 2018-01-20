@@ -27,7 +27,7 @@ public interface InformationEstimatorInterface{
 //そうでなければ、情報量の推定、
 }                        
 */
-
+ 
 public class TestCase {
     public static void main(String[] args) {
 	try {
@@ -37,7 +37,7 @@ public class TestCase {
 	    myObject = new s4.b173304.Frequencer();
 		myObject.setSpace("Hi Ho Hi Ho".getBytes());
 	    //myObject.setSpace("".getBytes());		
-		myObject.setTarget("Ho".getBytes());
+		myObject.setTarget("HiH".getBytes());
 	    //myObject.setTarget("".getBytes());		
 	    freq = myObject.frequency();
 	    System.out.print("\"H\" in \"Hi Ho Hi Ho\" appears "+freq+" times. ");
@@ -48,35 +48,35 @@ public class TestCase {
 	    System.out.println(e);
 	}
 
-	try {
-	    InformationEstimatorInterface myObject;
-		double value;
-	    System.out.println("");
-	    System.out.println("<< checking s4.b173304.InformationEstimator >>");
-	    myObject = new s4.b173304.InformationEstimator();
-		myObject.setSpace("3210321001230123".getBytes());
-		//myObject.setTarget("0".getBytes());
-	    value = myObject.estimation();
-	    System.out.println("target doesn't set : "+value);// not set
-		myObject.setTarget("".getBytes());// length == 0
-	    value = myObject.estimation();
-	    System.out.println("length = 0 : "+value);
-	    myObject.setTarget("0".getBytes());
-	    value = myObject.estimation();
-		System.out.println(">0 "+value);
-	    myObject.setTarget("01".getBytes());//Get Byte
-	    value = myObject.estimation();
-	    System.out.println(">01 "+value);
-	    myObject.setTarget("0123".getBytes());
-	    value = myObject.estimation();
-	    System.out.println(">0123 "+value);
-	    myObject.setTarget("00".getBytes());
-	    value = myObject.estimation();
-	    System.out.println(">00 "+value);
-	}
-	catch(Exception e) {
-	    System.out.println("Exception occurred: STOP");
-	}
+	// try {
+	//     InformationEstimatorInterface myObject;
+	// 	double value;
+	//     System.out.println("");
+	//     System.out.println("<< checking s4.b173304.InformationEstimator >>");
+	//     myObject = new s4.b173304.InformationEstimator();
+	// 	myObject.setSpace("3210321001230123".getBytes());
+	// 	//myObject.setTarget("0".getBytes());
+	//     value = myObject.estimation();
+	//     System.out.println("target doesn't set : "+value);// not set
+	// 	myObject.setTarget("".getBytes());// length == 0
+	//     value = myObject.estimation();
+	//     System.out.println("length = 0 : "+value);
+	//     myObject.setTarget("0".getBytes());
+	//     value = myObject.estimation();
+	// 	System.out.println(">0 "+value);
+	//     myObject.setTarget("01".getBytes());//Get Byte
+	//     value = myObject.estimation();
+	//     System.out.println(">01 "+value);
+	//     myObject.setTarget("0123".getBytes());
+	//     value = myObject.estimation();
+	//     System.out.println(">0123 "+value);
+	//     myObject.setTarget("00".getBytes());
+	//     value = myObject.estimation();
+	//     System.out.println(">00 "+value);
+	// }
+	// catch(Exception e) {
+	//     System.out.println("Exception occurred: STOP");
+	// }
 
 	// try {
 	//     FrequencerInterface  myObject;
@@ -129,4 +129,4 @@ public class TestCase {
 	// }
 	}
 }	    
-	    
+
