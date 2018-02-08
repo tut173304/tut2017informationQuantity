@@ -36,14 +36,22 @@ public class Frequencer implements FrequencerInterface{
 	boolean spaceReady = false;
 	
 	int [] suffixArray;
+	int [] A;
+	int [] a;
+	int count = 0;
+	
 
 	// The variable, "suffixArray" is the sorted array of all suffixes of mySpace.
 	// Each suffix is expressed by a interger, which is the starting position in mySpace.
 	// The following is the code to print the variable
 	private void printSuffixArray() {
+		System.out.println("< SuffixArray >");
+		
 		if(spaceReady) {
 			for(int i=0; i< mySpace.length; i++) {
 			int s = suffixArray[i];
+			System.out.print(i);
+			System.out.print(":");			
 			for(int j=s;j<mySpace.length;j++) {
 				System.out.write(mySpace[j]);
 			}
@@ -52,15 +60,15 @@ public class Frequencer implements FrequencerInterface{
 		}
 	}
 
-	private int suffixCompare(int i, int j) {
+	private int suffixCompare_(int i, int j) {
 		// comparing two suffixes by dictionary order.
 		// i and j denoetes suffix_i, and suffix_j
 		// if suffix_i > suffix_j, it returns 1
-		//if( mySpace[i] > mySpace[j] ) { return 1; }
+
 		// if suffix_i < suffix_j, it returns -1
-		//else if( mySpace[i] < mySpace[j] ) { return -1; }
+
 		// if suffix_i = suffix_j, it returns 0;
-		//else if( mySpace[i] == mySpace[j] ) { return 0; }
+		
 		// It is not implemented yet,
 		// It should be used to create suffix array.
 		//接尾辞配列の作成に使用する必要があります。
@@ -68,8 +76,8 @@ public class Frequencer implements FrequencerInterface{
 		// "i" < "o" : compare by code
 		// "Hi" < "Ho" ; if head is same, compare the next element
 		// "Ho" < "Ho " ; if the prefix is identical, longer string is big
-		int si = suffixArray[i];
-		int sj = suffixArray[j];
+		int si = i;
+		int sj = j;
 		int s = 0;
 		if(si > s) s = si;
 		if(sj > s) s = sj;
@@ -86,32 +94,20 @@ public class Frequencer implements FrequencerInterface{
 	public void setSpace(byte []space) {
 		mySpace = space; if(mySpace.length>0) spaceReady = true;
 		suffixArray = new int[space.length];
+		//a = new int[space.length];
+		a = suffixArray;
+		
 		// put all suffixes in suffixArray. Each suffix is expressed by one interger.
 		//すべての接尾辞を接尾辞Arrayに入れます。 各接尾辞は整数で表されます。
 		for(int i = 0; i< space.length; i++) {
-			suffixArray[i] = i;
+			a[i] = suffixArray[i] = i;
 		}
-		//System.out.println("test3");
+		//printSuffixArray();
 		
-
-		// Sorting is not implmented yet.
-		for(int i = 0; i < mySpace.length - 1; i++) {
-			for(int j = i+1; j < mySpace.length; j++) {
-
-				// System.out.println("test5");
-				// 	System.out.println(suffixArray[i]);
-				// 	System.out.println(suffixArray[j]);
-				if( suffixCompare(i, j) == 1 ) {
-					int temp = suffixArray[i];
-					suffixArray[i] = suffixArray[j];
-					suffixArray[j] = temp;
-				}
-				// System.out.println(suffixArray[i]);
-				// System.out.println(suffixArray[j]);
-				// System.out.println("----------------------");
-			}
-
-		}
+		System.out.println("\n< Mergesort >\n");
+		mergeSort(suffixArray);
+		//Copy the result to the suffixArray
+		//suffixArray = a;
 
 		/* Example from "Hi Ho Hi Ho"
 		0:Hi Ho Hi Ho
@@ -140,9 +136,46 @@ public class Frequencer implements FrequencerInterface{
 		A:o Hi Ho
 		*/
 
-		
-		//
 		printSuffixArray();
+	}
+
+	private void merge(int [] a1, int [] a2, int [] a) {
+		int i = 0, j = 0;
+		while(i < a1.length || j < a2.length) {
+			if(j >= a2.length || (i < a1.length && suffixCompare_(a1[i],a2[j]) != 1)) {
+				//System.out.println("add > "+a1[i]);				
+				a[i+j] = a1[i];
+				i++;
+			}
+			else{
+				//System.out.println("add > "+a2[j]);				
+				a[i+j] = a2[j];
+				j++;
+			}
+		}
+		//System.out.println("a1: "+a1.length+"  a2: "+a2.length);
+		
+		//System.out.print("addition >> ");
+		/* for(int k = 0; k < i+j; k++) {
+			System.out.print(a[k]);
+			System.out.print(" ");
+		} */
+		//System.out.println("\n--------------");
+	}
+
+	private void mergeSort(int [] a) {
+		if(a.length > 1) {
+			int m = a.length/2;
+			int n = a.length - m;
+			int [] a1 = new int[m];
+			int [] a2 = new int[n];
+			for(int i = 0; i < m; i++) { a1[i] = a[i]; }
+			for(int i = 0; i < n; i++) { a2[i] = a[m+i]; }
+			//System.out.println("a.length: "+a.length+"  middle: "+m);
+			mergeSort(a1);
+			mergeSort(a2);
+			merge(a1,a2,a);
+		}
 	}
 
 	private int targetCompare(int i, int start, int end) {
@@ -168,7 +201,8 @@ public class Frequencer implements FrequencerInterface{
 		// "Ho" < "Ho " : "Ho " is not in the head of suffix "Ho"
 		// "Ho" = "H" : "H" is in the head of suffix "Ho"
 
-		//byte [] part = Arrays.copyOfRange(mySpace, suffixArray[i] ,mySpace.length);
+		if (i < 0) { /* System.out.println("マイナスインデックス参照"); */ return -1; }
+		else if (i > mySpace.length - 1) { /* System.out.println("プラスインデックス参照"); */ return 1; }
 
 		int si = suffixArray[i];
 		int s = 0;
@@ -178,14 +212,12 @@ public class Frequencer implements FrequencerInterface{
 		//suffix_i > myTarget のとき
 		if( n > end - start ) n = end - start;
 
-
 		for(int k=0;k<n;k++) {
 			if(mySpace[si+k]>myTarget[start+k]) return 1;
 			if(mySpace[si+k]<myTarget[start+k]) return -1;
 		}
 
-		//if( n < end - start) return -1;
-
+		if( n < end - start) return -1;
 
 		return 0;
 
@@ -211,9 +243,30 @@ public class Frequencer implements FrequencerInterface{
 		9:o
 		A:o Hi Ho
 		*/
-		for(int i = 0; i < mySpace.length; i++) {
-			if( targetCompare(i, start, end) == 0 ) { return i; }
-		}
+
+
+		int pLeft = 0;
+		int pRight = mySpace.length - 1;
+		//System.out.println("pLeft: "+pLeft+" pRight:"+pRight);			
+		
+
+		do {
+			int center = (pLeft + pRight) / 2;
+			//System.out.println("Center > "+center);
+			
+			if (targetCompare(center,start,end) == 0 && targetCompare(center-1,start,end) == -1) {
+				//System.out.println("Index > "+center);				
+				return center;
+
+			} else if (targetCompare(center,start,end) == -1) {
+				pLeft = center + 1; //真ん中の一つ右側を左端とする
+			} else {
+				pRight = center - 1;
+			}
+			//System.out.println("pLeft: "+pLeft+" pRight:"+pRight);			
+		
+		} while (pLeft <= pRight);
+
 		return suffixArray.length;
 	}
 
@@ -237,11 +290,31 @@ public class Frequencer implements FrequencerInterface{
 		9:o
 		A:o Hi Ho
 		*/
-		//
-		for(int i = 0; i < mySpace.length - 1; i++) {
-			if( targetCompare(i, start, end) == 0 && targetCompare(i+1, start, end) != 0 ) { return i+1; }
-		}
+
+		int pLeft = 0;
+		int pRight = mySpace.length - 1;
+		//System.out.println("pLeft: "+pLeft+" pRight:"+pRight);			
+		
+		do {
+			int center = (pLeft + pRight) / 2;
+			//System.out.println("Center > "+center);
+			if (targetCompare(center,start,end) == 0 && targetCompare(center+1,start,end) == 1 ) {
+				//System.out.println("Index > "+center);
+				return center+1;
+
+			} else if (targetCompare(center,start,end) == 1) {
+				pRight = center - 1;
+				
+			} else {
+				pLeft = center + 1; //真ん中の一つ右側を左端とする
+			}
+
+			//System.out.println("pLeft: "+pLeft+" pRight:"+pRight);			
+			
+		} while (pLeft <= pRight);
+
 		return suffixArray.length;
+		
 	}
 
 	public int subByteFrequency(int start, int end) {
@@ -255,6 +328,8 @@ public class Frequencer implements FrequencerInterface{
 			}
 			if(abort == false) { count++; }
 		} */
+
+		System.out.println("\n< binary serch >\n");
 		
 		int first = subByteStartIndex(start,end);
 		int last1 = subByteEndIndex(start, end);
@@ -292,5 +367,5 @@ public class Frequencer implements FrequencerInterface{
 			System.out.println("STOP");
 		}
 	}
-}	    
+}
 	    
