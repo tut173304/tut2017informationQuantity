@@ -104,7 +104,7 @@ public class Frequencer implements FrequencerInterface{
 		}
 		//printSuffixArray();
 		
-		System.out.println("\n< Mergesort >\n");
+		//System.out.println("\n< Mergesort >\n");
 		mergeSort(suffixArray);
 		//Copy the result to the suffixArray
 		//suffixArray = a;
@@ -136,7 +136,7 @@ public class Frequencer implements FrequencerInterface{
 		A:o Hi Ho
 		*/
 
-		printSuffixArray();
+		//printSuffixArray();
 	}
 
 	private void merge(int [] a1, int [] a2, int [] a) {
@@ -329,14 +329,14 @@ public class Frequencer implements FrequencerInterface{
 			if(abort == false) { count++; }
 		} */
 
-		System.out.println("\n< binary serch >\n");
+		//System.out.println("\n< binary serch >\n");
 		
 		int first = subByteStartIndex(start,end);
 		int last1 = subByteEndIndex(start, end);
 
 		//inspection code
-		for(int k=start;k<end;k++) { System.out.write(myTarget[k]); }
-		System.out.printf(": first=%d last1=%d\n", first, last1);
+		// for(int k=start;k<end;k++) { System.out.write(myTarget[k]); }
+		// System.out.printf(": first=%d last1=%d\n", first, last1);
 		
 		return last1 - first;
 	}
